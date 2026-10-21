@@ -12,6 +12,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Completed-success)](#)
 
+<img width="1513" height="806" alt="Screenshot 2026-10-22 010031" src="https://github.com/user-attachments/assets/4a7d6c95-20a2-4064-b202-cfbb1e7e5cbf" />
+
+
 <br/>
 
 > *Developed by **Sharad Sharma** for **SyntecXHub Technologies Pvt. Ltd.** (Task-4: Python Programming Internship).*
