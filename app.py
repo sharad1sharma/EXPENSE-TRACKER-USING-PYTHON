@@ -58,7 +58,6 @@ app = Flask(__name__, static_folder=str(BASE_DIR), static_url_path="")
 CORS(app)
 
 @app.route("/")
-@app.route("/api/index")
 def index():
     html_file = BASE_DIR / "index.html"
     if html_file.exists():
