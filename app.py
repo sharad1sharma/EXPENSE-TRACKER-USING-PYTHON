@@ -218,14 +218,15 @@ def get_summary():
 
 @app.route("/api/export/<format_type>", methods=["GET"])
 def export_file(format_type):
+    from export import REPORT_FOLDER
     if format_type == "csv":
         export_csv()
-        file_path = BASE_DIR / "reports" / "transactions.csv"
+        file_path = Path(REPORT_FOLDER) / "transactions.csv"
         if file_path.exists():
             return send_file(file_path, as_attachment=True, download_name="transactions.csv")
     elif format_type == "excel":
         export_excel()
-        file_path = BASE_DIR / "reports" / "transactions.xlsx"
+        file_path = Path(REPORT_FOLDER) / "transactions.xlsx"
         if file_path.exists():
             return send_file(file_path, as_attachment=True, download_name="transactions.xlsx")
     return jsonify({"error": "Export failed or format invalid"}), 400

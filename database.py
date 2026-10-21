@@ -1,8 +1,30 @@
 # database.py
 
+import os
+import shutil
+import tempfile
+import stat
 import sqlite3
+from pathlib import Path
 
-DB_NAME = "expense.db"
+BASE_DIR = Path(__file__).resolve().parent
+IS_SERVERLESS = 'VERCEL' in os.environ or 'VERCEL_ENV' in os.environ or bool(os.environ.get('AWS_LAMBDA_FUNCTION_NAME'))
+
+if IS_SERVERLESS:
+    DB_NAME = str(Path(tempfile.gettempdir()) / "expense.db")
+    orig_db = BASE_DIR / "expense.db"
+    # Copy pre-seeded database to writable temporary directory if it doesn't exist yet
+    if not os.path.exists(DB_NAME) and orig_db.exists():
+        try:
+            shutil.copyfile(str(orig_db), DB_NAME)
+            try:
+                os.chmod(DB_NAME, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH | stat.S_IWOTH)
+            except Exception:
+                pass
+        except Exception:
+            pass
+else:
+    DB_NAME = str(BASE_DIR / "expense.db")
 
 
 def get_connection():
