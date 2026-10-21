@@ -10,4 +10,5 @@ if str(ROOT_DIR) not in sys.path:
 from app import app
 
 # Vercel WSGI entry point
-# Exports 'app' for the WSGI serverless runtime
+# Exports 'app' and 'handler' for compatibility with Vercel serverless runtime
+handler = app

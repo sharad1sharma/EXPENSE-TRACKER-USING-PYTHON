@@ -13,10 +13,15 @@ import tempfile
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
-IS_SERVERLESS = 'VERCEL' in os.environ or 'VERCEL_ENV' in os.environ or bool(os.environ.get('AWS_LAMBDA_FUNCTION_NAME'))
-
-REPORT_FOLDER = str(Path(tempfile.gettempdir()) / "reports") if IS_SERVERLESS else str(BASE_DIR / "reports")
-os.makedirs(REPORT_FOLDER, exist_ok=True)
+try:
+    REPORT_FOLDER = str(BASE_DIR / "reports")
+    os.makedirs(REPORT_FOLDER, exist_ok=True)
+except (OSError, PermissionError):
+    REPORT_FOLDER = str(Path(tempfile.gettempdir()) / "reports")
+    try:
+        os.makedirs(REPORT_FOLDER, exist_ok=True)
+    except Exception:
+        pass
 
 
 # ==============================

@@ -16,34 +16,40 @@ from database import initialize_database, get_connection, execute_query, fetch_a
 from reports import total_income, total_expense, total_transactions, highest_expense, lowest_expense, average_expense
 from export import export_csv, export_excel
 
-# Initialize SQLite database
-initialize_database()
+# Initialize SQLite database safely
+try:
+    initialize_database()
+except Exception as e:
+    print(f"Notice: Database initialization deferred or skipped: {e}")
 
 # Seed default transactions if empty so the UI looks great immediately
 def seed_initial_data_if_empty():
-    conn = get_connection()
-    c = conn.cursor()
-    c.execute("SELECT COUNT(*) FROM transactions")
-    count = c.fetchone()[0]
-    if count == 0:
-        sample_records = [
-            ("2026-07-01", "Income", "Salary", 55000.0, "Monthly Software Engineering Salary"),
-            ("2026-07-03", "Expense", "Rent", 12000.0, "Apartment Monthly Rent"),
-            ("2026-07-05", "Expense", "Groceries", 3450.0, "Supermarket weekly groceries"),
-            ("2026-07-08", "Income", "Freelancing", 18500.0, "Python Scripting & API Project"),
-            ("2026-07-10", "Expense", "Utilities", 1850.0, "Electricity & High-speed Fiber Bill"),
-            ("2026-07-14", "Expense", "Dining", 1250.0, "Team dinner & pizza"),
-            ("2026-07-18", "Expense", "Shopping", 4200.0, "Mechanical keyboard & tech gear"),
-            ("2026-07-22", "Income", "Investments", 3200.0, "Quarterly dividend payout"),
-            ("2026-07-25", "Expense", "Transportation", 1600.0, "Metro pass & fuel refill"),
-            ("2026-07-28", "Expense", "Entertainment", 999.0, "Cloud stream subscription"),
-        ]
-        c.executemany(
-            "INSERT INTO transactions (date, type, category, amount, description) VALUES (?, ?, ?, ?, ?)",
-            sample_records
-        )
-        conn.commit()
-    conn.close()
+    try:
+        conn = get_connection()
+        c = conn.cursor()
+        c.execute("SELECT COUNT(*) FROM transactions")
+        count = c.fetchone()[0]
+        if count == 0:
+            sample_records = [
+                ("2026-07-01", "Income", "Salary", 55000.0, "Monthly Software Engineering Salary"),
+                ("2026-07-03", "Expense", "Rent", 12000.0, "Apartment Monthly Rent"),
+                ("2026-07-05", "Expense", "Groceries", 3450.0, "Supermarket weekly groceries"),
+                ("2026-07-08", "Income", "Freelancing", 18500.0, "Python Scripting & API Project"),
+                ("2026-07-10", "Expense", "Utilities", 1850.0, "Electricity & High-speed Fiber Bill"),
+                ("2026-07-14", "Expense", "Dining", 1250.0, "Team dinner & pizza"),
+                ("2026-07-18", "Expense", "Shopping", 4200.0, "Mechanical keyboard & tech gear"),
+                ("2026-07-22", "Income", "Investments", 3200.0, "Quarterly dividend payout"),
+                ("2026-07-25", "Expense", "Transportation", 1600.0, "Metro pass & fuel refill"),
+                ("2026-07-28", "Expense", "Entertainment", 999.0, "Cloud stream subscription"),
+            ]
+            c.executemany(
+                "INSERT INTO transactions (date, type, category, amount, description) VALUES (?, ?, ?, ?, ?)",
+                sample_records
+            )
+            conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"Notice: Initial data seeding skipped: {e}")
 
 seed_initial_data_if_empty()
 

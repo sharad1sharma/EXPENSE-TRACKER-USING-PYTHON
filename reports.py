@@ -3,8 +3,18 @@
 import os
 from database import fetch_all, fetch_one
 
-REPORT_FOLDER = "reports"
-os.makedirs(REPORT_FOLDER, exist_ok=True)
+import tempfile
+from pathlib import Path
+
+try:
+    REPORT_FOLDER = "reports"
+    os.makedirs(REPORT_FOLDER, exist_ok=True)
+except (OSError, PermissionError):
+    REPORT_FOLDER = str(Path(tempfile.gettempdir()) / "reports")
+    try:
+        os.makedirs(REPORT_FOLDER, exist_ok=True)
+    except Exception:
+        pass
 
 
 def total_income():
