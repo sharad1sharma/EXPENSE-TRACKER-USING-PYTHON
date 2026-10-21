@@ -2,7 +2,6 @@
 
 import csv
 import os
-import pandas as pd
 
 from database import fetch_all
 
@@ -95,41 +94,32 @@ def export_csv():
 # ==============================
 
 def export_excel():
-
     rows = fetch_transactions()
-
     if not rows:
         print("\n❌ No transactions available.\n")
         return
 
-    data = []
+    file_path = os.path.join(REPORT_FOLDER, "transactions.xlsx")
+    try:
+        from openpyxl import Workbook
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Transactions"
+        ws.append(["ID", "Date", "Type", "Category", "Amount", "Description"])
+        for row in rows:
+            ws.append([row["id"], row["date"], row["type"], row["category"], row["amount"], row["description"]])
+        wb.save(file_path)
+    except ImportError:
+        try:
+            import pandas as pd
+            data = [{"ID": r["id"], "Date": r["date"], "Type": r["type"], "Category": r["category"], "Amount": r["amount"], "Description": r["description"]} for r in rows]
+            df = pd.DataFrame(data)
+            df.to_excel(file_path, index=False)
+        except ImportError:
+            print("Neither openpyxl nor pandas installed.")
+            return
 
-    for row in rows:
-
-        data.append({
-
-            "ID": row["id"],
-            "Date": row["date"],
-            "Type": row["type"],
-            "Category": row["category"],
-            "Amount": row["amount"],
-            "Description": row["description"]
-
-        })
-
-    df = pd.DataFrame(data)
-
-    file_path = os.path.join(
-        REPORT_FOLDER,
-        "transactions.xlsx"
-    )
-
-    df.to_excel(
-        file_path,
-        index=False
-    )
-
-    print(f"✅ Excel exported successfully.")
+    print("✅ Excel exported successfully.")
     print(file_path)
 
 

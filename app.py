@@ -52,8 +52,13 @@ app = Flask(__name__, static_folder=str(BASE_DIR), static_url_path="")
 CORS(app)
 
 @app.route("/")
+@app.route("/api/index")
 def index():
-    return send_file(BASE_DIR / "index.html")
+    html_file = BASE_DIR / "index.html"
+    if html_file.exists():
+        with open(html_file, "r", encoding="utf-8") as f:
+            return f.read(), 200, {"Content-Type": "text/html; charset=utf-8"}
+    return "<h1>Expense Tracker Frontend</h1><p>index.html not found</p>", 404
 
 @app.route("/api/transactions", methods=["GET"])
 def get_transactions():
